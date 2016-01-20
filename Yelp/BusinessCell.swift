@@ -35,7 +35,12 @@ class BusinessCell: UITableViewCell {
         super.awakeFromNib()
         storeImageView.layer.cornerRadius = 3
         storeImageView.clipsToBounds = true
-        // Initialization code
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        
     }
 
     override func setSelected(selected: Bool, animated: Bool) {
