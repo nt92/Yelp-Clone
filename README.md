@@ -14,7 +14,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-- [ ] Search results page
+- [X] Search results page
 - [ ] Infinite scroll for restaurant results.
 - [ ] Implement map view of restaurant results.
 - [ ] Implement the restaurant detail page.
@@ -27,13 +27,15 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='Yelp2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+
+I tried doing a refresh control but kept getting an error within my BusinessCell saying the identifier existed so I decided not to use it.
 
 ## License
 
