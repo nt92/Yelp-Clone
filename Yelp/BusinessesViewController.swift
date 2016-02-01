@@ -8,16 +8,20 @@
 
 import UIKit
 
-class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
+class BusinessesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,  UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
+    //var refreshControl: UIRefreshControl
     var businesses: [Business]!
+    var filteredData: [Business]?
+    
+    var search: String = ""
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         if businesses != nil{
-            return businesses!.count
+            return filteredData!.count
         } else {
             return 0
         }
@@ -26,7 +30,7 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell{
         let cell = tableView.dequeueReusableCellWithIdentifier("BusinessCell", forIndexPath: indexPath) as! BusinessCell
         
-        cell.business = businesses[indexPath.row]
+        cell.business = filteredData![indexPath.row]
         
         return cell
     }
@@ -41,20 +45,17 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         
         let searchBar = UISearchBar()
         searchBar.sizeToFit()
-        
         searchBar.showsCancelButton = true
+        searchBar.delegate = self
         
         navigationItem.titleView = searchBar
 
-        Business.searchWithTerm("Thai", completion: { (businesses: [Business]!, error: NSError!) -> Void in
-            self.businesses = businesses
-            self.tableView.reloadData()
-            for business in businesses {
-                print(business.name!)
-                print(business.address!)
-            }
-        })
-
+        YelpAPI(search)
+        
+//        refreshControl = UIRefreshControl()
+//        refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
+//        tableView.insertSubview(refreshControl, atIndex: 0)
+        
 /* Example of Yelp search with more search options specified
         Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
@@ -66,11 +67,57 @@ class BusinessesViewController: UIViewController, UITableViewDelegate, UITableVi
         }
 */
     }
+    
+    func YelpAPI(input: String){
+        search = input
+        Business.searchWithTerm(input, completion: { (businesses: [Business]!, error: NSError!) -> Void in
+            self.businesses = businesses
+            self.filteredData = businesses
+            self.tableView.reloadData()
+            for business in businesses {
+                print(business.name!)
+                print(business.address!)
+            }
+        })
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        filteredData = businesses
+        self.tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        YelpAPI(searchBar.text!)
+        tableView.reloadData()
+        searchBar.resignFirstResponder()
+    }
+    
+//    func delay(delay:Double, closure:()->()) {
+//        dispatch_after(
+//             dispatch_time(
+//                DISPATCH_TIME_NOW,
+//               Int64(delay * Double(NSEC_PER_SEC))
+//            ),
+//            dispatch_get_main_queue(), closure)
+//    }
+//    
+//    func onRefresh() {
+//        delay(2, closure: {
+//            self.refreshControl.endRefreshing()
+//        })
+//            
+//        YelpAPI(search)
+//            
+//        self.refreshControl.endRefreshing()
+//    }
 
     /*
     // MARK: - Navigation
